@@ -51,14 +51,6 @@ project(":iceberg-spark:iceberg-spark-${sparkMajorVersion}_${scalaVersion}") {
   apply plugin: 'scala'
   apply plugin: 'com.github.alisiikh.scalastyle'
 
-  // Set target to JDK17 for Spark 4.1 to fix following error
-  // "spark/v4.1/spark/src/main/scala/org/apache/spark/sql/stats/ThetaSketchAgg.scala:52:12: Class java.lang.Record not found"
-  tasks.withType(ScalaCompile.class) {
-    sourceCompatibility = "17"
-    targetCompatibility = "17"
-    scalaCompileOptions.additionalParameters.add("-release:17")
-  }
-
   sourceSets {
     main {
       scala.srcDirs = ['src/main/scala', 'src/main/java']
@@ -91,9 +83,6 @@ project(":iceberg-spark:iceberg-spark-${sparkMajorVersion}_${scalaVersion}") {
       exclude group: 'io.netty', module: 'netty-common'
       exclude group: 'org.roaringbitmap'
     }
-
-    // TODO: datafusion-comet Spark 4.1 support
-    compileOnly "org.apache.datafusion:comet-spark-spark4.0_2.13:${libs.versions.comet.get()}"
 
     implementation libs.parquet.column
     implementation libs.parquet.hadoop
@@ -203,8 +192,6 @@ project(":iceberg-spark:iceberg-spark-extensions-${sparkMajorVersion}_${scalaVer
     testImplementation libs.avro.avro
     testImplementation libs.parquet.hadoop
     testImplementation libs.awaitility
-    // TODO: datafusion-comet Spark 4.1 support
-    testImplementation "org.apache.datafusion:comet-spark-spark4.0_2.13:${libs.versions.comet.get()}"
     testImplementation(testFixtures(project(':iceberg-parquet')))
 
     // Required because we remove antlr plugin dependencies from the compile configuration, see note above
